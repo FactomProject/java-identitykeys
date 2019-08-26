@@ -29,12 +29,12 @@ public class main {
 
 	public static void main(String[] args) {
 		
-		if (args.length > 0) {
-			if (args[0].equals("test")) {
+	//	if (args.length > 0) {
+	//		if (args[0].equals("test")) {
 			testCalls();
-			}
+	//		}
 			
-		}
+	//	}
 		
 		
 		// possible TODO, add commandline tools 
@@ -83,6 +83,24 @@ public class main {
 		System.out.println("Sigature:" + bytesToHex(sig));
 		Boolean validSig = verifyData("hi".getBytes(),sig); 
 		System.out.println("Signature Passed:" + validSig);
+		
+		//test again with 'new' public key
+		// you don't need to feed this back in, 
+		// I am being lazy and using the address I already 
+		// have in idpub.
+		
+		setAddressFromPublicKeyString(getIDPubAddress());
+		validSig = verifyData("hi".getBytes(),sig); 
+		System.out.println("Signature Passed:" + idpubAddress);	
+		System.out.println("Signature Passed:" + validSig);	
+		
+		
+		//and again, loading public key as bytes
+		setAddressFromPublicKeyBytes(getIDPubBytes());
+		validSig = verifyData("hi".getBytes(),sig); 
+		System.out.println("Signature Passed:" + idpubAddress);	
+		System.out.println("Signature Passed:" + validSig);	
+			
 		
 		// base64 is a java library.  use something similar to the below
 		//	import java.util.Base64;
@@ -256,6 +274,75 @@ public class main {
 		}
 
 	}
+	
+	
+	/**setAddressFromPublicKeyBytes  - 
+	* sets public key bytes 
+	* creates idpub format for idpubAddress
+	* CLEARS PRIVATE KEY VALUES AS THEY MAY NOT MATCH
+	* * to get the keys, call get functions after set
+	* @param 
+	*  privateKeyString  idsec formatted string
+	* @return
+	* none.  user get calls to access keys
+	* 
+	**/		
+	public static void setAddressFromPublicKeyBytes(byte[] publicKeyBytes) {
+
+		try {
+			
+			publicBytes=publicKeyBytes;
+			idpubAddress= getIdentityAddressFromKey(publicKeyBytes, "idpub");
+			privateBytes=null;
+			idsecAddress="";
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}	
+	
+	
+
+	/**setAddressFromPublicKeyString  - 
+	* verifies public key is valid then pulls 32 byte private key bytes 
+	* Sets public address and public bytes (now you can verify signature)
+	* CLEARS PRIVATE KEY VALUES AS THEY MAY NOT MATCH
+	* * to get the keys, call get functions after set
+	* @param 
+	*  privateKeyString  idsec formatted string
+	* @return
+	* none.  user get calls to access keys
+	* 
+	**/		
+	public static void setAddressFromPublicKeyString(String publicKeyString) {
+
+		try {
+			
+			byte[] b256=new byte[41];
+			byte[] hash=new byte[32];
+			
+			b256=Encode58addressto256(publicKeyString);
+			
+			System.arraycopy(b256,5, hash, 0, 32);
+			System.out.println(bytesToHex(hash));
+			
+			publicBytes=hash;
+			idpubAddress= getIdentityAddressFromKey(hash, "idpub");
+			privateBytes=null;
+			idsecAddress="";
+			
+			return;
+			
+
+			
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}	
 	
 		
 	
