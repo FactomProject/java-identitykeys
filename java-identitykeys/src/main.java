@@ -15,7 +15,7 @@ public class main {
 	/**
 	 * @param test If "test" is used on commandline, the testCalls function will run
 	 *             otherwise, include jar file in project and call public functions
-	 *             for key handling use one of the set funtions before signing,
+	 *             for key handling use one of the set functions before signing,
 	 *             verifying, or get calls
 	 */
 
@@ -48,7 +48,7 @@ public class main {
 		// this takes 32 bytes
 		// a private key can technically be 64 bytes
 		// that is 32 bytes private + 32 bytes public
-		// if you key is 64 bytes, send the first 32.
+		// if your key is 64 bytes, send the first 32.
 		// it SHOULD set public to the same bytes
 		// as the last half of your 64
 
@@ -79,7 +79,7 @@ public class main {
 
 		// test again with 'new' public key
 		// you don't need to feed this back in,
-		// I am being lazy and using the address I already
+		// I am simply using the address I already
 		// have in idpub.
 
 		setAddressFromPublicKeyString(getIDPubAddress());
