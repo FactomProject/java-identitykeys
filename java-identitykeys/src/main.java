@@ -106,7 +106,7 @@ public class main {
 	}
 
 	public static String getIDPubAddress() {
-		return idsecAddress;
+		return idpubAddress;
 	}
 
 	public static byte[] getIDSecBytes() {
