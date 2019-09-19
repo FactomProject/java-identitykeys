@@ -212,7 +212,7 @@ public class App {
     }
 
     /**
-     * setAddressWithNewKey - generates public key that goes with the private key
+     * setAddressFromPrivateKeyBytes - generates public key that goes with the private key
      * (seed) and creates the public/private key pairs * to get the keys, call get
      * functions after set
      *
