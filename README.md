@@ -1,10 +1,10 @@
 # java-identitykeys
-A small module of tools to generate and use key pairs for Factom Identities.
+A small module of tools to generate and use key pairs for Factom Identities. These identities and keys are required when using the [Factom Signing Standard](https://docs.harmony.factom.com/docs/factom-signing-standard) to create authenticated blockchain entries.
 
-## Usage
-Each instance of java-identitykeys can have a single Ed25519 key pair loaded into memory. Once a key is loaded, you can use the included functions to display information about the key as well as to sign and verify transactions.
+# Usage
+Each instance of java-identitykeys can have a single [Ed25519 key pair](https://ed25519.cr.yp.to/) loaded into memory. Once a key is loaded, you can use the included functions to display information about the key as well as to sign and verify transactions.
 
-### Creating a new Key
+## Creating a new Key
 To create a new identity key, use the `setAddressWithNewKey()` method. This will return a randomly generated `idsec` formated private key.
 
 ```
@@ -12,7 +12,7 @@ setAddressWithNewKey();
 ```
 
 
-### Importing a Private key
+## Importing a Private key
 There are two options you can use to import an existing private key:
 
 **From 32 byte private key**
@@ -29,7 +29,7 @@ If you have the idsec format key, you can import it using the following command.
   ```setAddressFromPrivateKeyString("idsecXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");```
 
 
-### Signing and Verification
+## Signing and Verification
 Once the address has been seet, 4 methods are available to help you sign and verify using those keys. These will retuen the data of the currently loaded key.
 
 **To get idsec formatted string of private key**
@@ -49,14 +49,14 @@ Once the address has been seet, 4 methods are available to help you sign and ver
   ```	getIDPubBytes ();```
   
 
-#### Signing
+### Signing
 To sign byte data using private key  (key already loaded from set call)**
 
   ```   byte[] Signature = new byte[64];
      Signature = signData( bytedata );
    ```
 
-#### Verification
+### Verification
 To verify signature using public key   (key already loaded from set call)
 
 ```
@@ -73,7 +73,7 @@ If you need to load the public key for signature verification
    ```
    then verify
 
-## Format of an Identity Key Pair
+# Format of an Identity Key Pair
 *Note: the following text is taken from the [Application Identity Specification](https://github.com/FactomProject/FactomDocs/blob/FD-849_PublishNewIdentitySpec/ApplicationIdentity.md)*
 
 For Factom Application Identities, ed25519 keys are used to sign and verify messages. Rather than simply using raw 32 byte arrays for keys, the following encoding scheme is used: 
