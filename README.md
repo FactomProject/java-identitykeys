@@ -30,13 +30,13 @@ If you have the idsec format key, you can import it using the following command.
 
 
 ## Signing and Verification
-Once the address has been seet, 4 methods are available to help you sign and verify using those keys. These will retuen the data of the currently loaded key.
+Once the address has been set, 4 methods are available to help you sign and verify using those keys. These will return the data of the currently loaded key.
 
 **To get idsec formatted string of private key**
 
   ```  getIDSecAddress();```
   
-**To get idsec formatted string of public**
+**To get idpub formatted string of public**
 
   ```  getIDPubAddress();```
    
