@@ -5,10 +5,10 @@ A small module of tools to generate and use key pairs for Factom Identities. The
 Each instance of java-identitykeys can have a single [Ed25519 key pair](https://ed25519.cr.yp.to/) loaded into memory. Once a key is loaded, you can use the included functions to display information about the key as well as to sign and verify transactions.
 
 ## Creating a new Key
-To create a new identity key, use the `setAddressWithNewKey()` method. This will return a randomly generated `idsec` formated private key.
+To create a new identity key, use the `setIdentityWithNewKey()` method. This will return a randomly generated `idsec` formated private key.
 
 ```
-setAddressWithNewKey();
+setIdentityWithNewKey();
 ```
 
 
@@ -19,26 +19,26 @@ There are two options you can use to import an existing private key:
 
 An existing key or new byte array can be used to create an `idsec` formatted key.
 
-  ```setAddressFromPrivateKeyBytes(seed);```
+  ```setIdentityFromPrivateKeyBytes(seed);```
  
 
 **From an existing `idsec` key string**
 
 If you have the idsec format key, you can import it using the following command.
 
-  ```setAddressFromPrivateKeyString("idsecXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");```
+  ```setIdentityFromPrivateKeyString("idsecXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");```
 
 
 ## Signing and Verification
-Once the address has been set, 4 methods are available to help you sign and verify using those keys. These will return the data of the currently loaded key.
+Once the identity has been set, 4 methods are available to help you sign and verify using those keys. These will return the data of the currently loaded key.
 
 **To get idsec formatted string of private key**
 
-  ```  getIDSecAddress();```
+  ```  getIDSecString();```
   
 **To get idpub formatted string of public**
 
-  ```  getIDPubAddress();```
+  ```  getIDPubString();```
    
 **To get private key bytes**
 
@@ -65,11 +65,11 @@ To verify signature using public key   (key already loaded from set call)
 
 If you need to load the public key for signature verification
 ``` 
-  setAddressFromPublicKeyString( idpub key string);
+  setIdentityFromPublicKeyString( idpub key string);
  ```
  or
  ```
-      setAddressFromPublicKeyBytes(public key bytes);
+      setIdentityFromPublicKeyBytes(public key bytes);
    ```
    then verify
 
