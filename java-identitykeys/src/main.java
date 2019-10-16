@@ -19,8 +19,8 @@ public class main {
 	 *             verifying, or get calls
 	 */
 
-	private static String idsecAddress = "";
-	private static String idpubAddress = "";
+	private static String idsecString = "";
+	private static String idpubString = "";
 	private static byte[] privateBytes;
 	private static byte[] publicBytes;
 	private static EdDSAPublicKey publicKey;
@@ -55,23 +55,23 @@ public class main {
 		// byte[] seed = sha256Bytes("test".getBytes());
 		// System.out.println(bytesToHex(seed));
 		// if you are using bytes for the private key
-		// setAddressFromPrivateKeyBytes(seed);
+		// setIdentityFromPrivateKeyBytes(seed);
 
 		// if you have no private key
-		// setAddressWithNewKey()
+		// setIdentityWithNewKey()
 
 		// if you are using idsecXXX key
-		setAddressFromPrivateKeyString("idsec2NF5DhT2EKTo4ap7xFYNoVNDwWHygX8UdJim3RnURmkVX3LCiF");
+		setIdentityFromPrivateKeyString("idsec2NF5DhT2EKTo4ap7xFYNoVNDwWHygX8UdJim3RnURmkVX3LCiF");
 
-		System.out.println("sec:" + idsecAddress);
+		System.out.println("sec:" + idsecString);
 		System.out.println(bytesToHex(privateBytes));
 		System.out.println("");
-		System.out.println("pub:" + idpubAddress);
+		System.out.println("pub:" + idpubString);
 		System.out.println(bytesToHex(publicBytes));
 		System.out.println("");
 
 		// test signature
-		// this works AFTER one of the setAddress calls
+		// this works AFTER one of the setIdentity calls
 		byte[] sig = signData("hi".getBytes());
 		System.out.println("Signature:" + bytesToHex(sig));
 		Boolean validSig = verifyData("hi".getBytes(), sig);
@@ -79,18 +79,18 @@ public class main {
 
 		// test again with 'new' public key
 		// you don't need to feed this back in,
-		// I am simply using the address I already
+		// I am simply using the identity I already
 		// have in idpub.
 
-		setAddressFromPublicKeyString(getIDPubAddress());
+		setIdentityFromPublicKeyString(getIDPubString());
 		validSig = verifyData("hi".getBytes(), sig);
-		System.out.println("Signature Passed:" + idpubAddress);
+		System.out.println("Signature Passed:" + idpubString);
 		System.out.println("Signature Passed:" + validSig);
 
 		// and again, loading public key as bytes
-		setAddressFromPublicKeyBytes(getIDPubBytes());
+		setIdentityFromPublicKeyBytes(getIDPubBytes());
 		validSig = verifyData("hi".getBytes(), sig);
-		System.out.println("Signature Passed:" + idpubAddress);
+		System.out.println("Signature Passed:" + idpubString);
 		System.out.println("Signature Passed:" + validSig);
 
 		// base64 is a java library. use something similar to the below
@@ -100,13 +100,13 @@ public class main {
 
 	}
 
-	// get calls for address values
-	public static String getIDSecAddress() {
-		return idsecAddress;
+	// get calls for identity values
+	public static String getIDSecString() {
+		return idsecString;
 	}
 
-	public static String getIDPubAddress() {
-		return idpubAddress;
+	public static String getIDPubString() {
+		return idpubString;
 	}
 
 	public static byte[] getIDSecBytes() {
@@ -118,7 +118,7 @@ public class main {
 	}
 
 	/**
-	 * getIdentityAddressFromKey - takes a 32 byte array holding the private key. if
+	 * getIdentityFromKey - takes a 32 byte array holding the private key. if
 	 * your private key is 64 bytes, it is the first 32
 	 *
 	 * @param key     byte[]
@@ -126,8 +126,8 @@ public class main {
 	 * @return idsec public key format or idpub public key format
 	 *
 	 **/
-	public static String getIdentityAddressFromKey(byte[] key, String keyType) {
-		String address = "";
+	public static String getIdentityFromKey(byte[] key, String keyType) {
+		String identity = "";
 		byte[] appendPrefix = new byte[37];
 		byte[] appendSuffix = new byte[41];
 		byte[] firstHash;
@@ -156,27 +156,27 @@ public class main {
 		appendSuffix[39] = firstHash[2];
 		appendSuffix[40] = firstHash[3];
 
-		address = Encode256to58(appendSuffix);
-		return address;
+		identity = Encode256to58(appendSuffix);
+		return identity;
 
 	}
 
 	/**
-	 * setAddressWithNewKey - generates random seed then calls
-	 * setAddressFromPrivateKeyBytes and created the public/private key pairs seed
+	 * setIdentityWithNewKey - generates random seed then calls
+	 * setIdentityFromPrivateKeyBytes and created the public/private key pairs seed
 	 * is the private key * to get the keys, call get functions after set
 	 *
 	 * @return idsec public key format or idpub public key format
 	 *
 	 **/
-	public static void setAddressWithNewKey() {
+	public static void setIdentityWithNewKey() {
 
 		try {
 
 			SecureRandom random = new SecureRandom();
 			byte seed[] = random.generateSeed(32);
 			byte seedHash[] = sha256Bytes(seed);
-			setAddressFromPrivateKeyBytes(seedHash);
+			setIdentityFromPrivateKeyBytes(seedHash);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -185,7 +185,7 @@ public class main {
 	}
 
 	/**
-	 * setAddressFromPrivateKeyBytes - generates public key that goes with the private key
+	 * setIdentityFromPrivateKeyBytes - generates public key that goes with the private key
 	 * (seed) and creates the public/private key pairs * to get the keys, call get
 	 * functions after set
 	 *
@@ -194,7 +194,7 @@ public class main {
 	 *
 	 **/
 
-	public static void setAddressFromPrivateKeyBytes(byte[] seed) {
+	public static void setIdentityFromPrivateKeyBytes(byte[] seed) {
 
 		try {
 
@@ -208,8 +208,8 @@ public class main {
 			System.out.println(bytesToHex(privateBytes));
 			publicBytes = publicKey.getAbyte();
 
-			idsecAddress = getIdentityAddressFromKey(privateBytes, "idsec");
-			idpubAddress = getIdentityAddressFromKey(publicBytes, "idpub");
+			idsecString = getIdentityFromKey(privateBytes, "idsec");
+			idpubString = getIdentityFromKey(publicBytes, "idpub");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -218,30 +218,30 @@ public class main {
 	}
 
 	/**
-	 * setAddressFromPrivateKeyString - verifies private key is valid then pulls 32
+	 * setIdentityFromPrivateKeyString - verifies private key is valid then pulls 32
 	 * byte private key bytes * from idsec format and calls
-	 * setAddressFromPrivateKeyBytes and creates the public/private key pairs * to
+	 * setIdentityFromPrivateKeyBytes and creates the public/private key pairs * to
 	 * get the keys, call get functions after set
 	 *
 	 * @param privateKeyString idsec formatted string
 	 * @return none. user get calls to access keys
 	 *
 	 **/
-	public static void setAddressFromPrivateKeyString(String privateKeyString) {
+	public static void setIdentityFromPrivateKeyString(String privateKeyString) {
 
 		try {
 
 			byte[] b256 = new byte[41];
 			byte[] hash = new byte[32];
 
-			b256 = Encode58addressto256(privateKeyString);
+			b256 = Encode58to256(privateKeyString);
 
 			System.arraycopy(b256, 5, hash, 0, 32);
 			System.out.println(bytesToHex(hash));
 
-			setAddressFromPrivateKeyBytes(hash);
+			setIdentityFromPrivateKeyBytes(hash);
 
-			if (privateKeyString.equals(idsecAddress)) {
+			if (privateKeyString.equals(idsecString)) {
 				return;
 			} else {
 				// key problem.
@@ -255,22 +255,22 @@ public class main {
 	}
 
 	/**
-	 * setAddressFromPublicKeyBytes - sets public key bytes creates idpub format for
-	 * idpubAddress CLEARS PRIVATE KEY VALUES AS THEY MAY NOT MATCH * to get the
+	 * setIdentityFromPublicKeyBytes - sets public key bytes creates idpub format for
+	 * idpubIdentity CLEARS PRIVATE KEY VALUES AS THEY MAY NOT MATCH * to get the
 	 * keys, call get functions after set
 	 *
 	 * @param privateKeyString idsec formatted string
 	 * @return none. user get calls to access keys
 	 *
 	 **/
-	public static void setAddressFromPublicKeyBytes(byte[] publicKeyBytes) {
+	public static void setIdentityFromPublicKeyBytes(byte[] publicKeyBytes) {
 
 		try {
 
 			publicBytes = publicKeyBytes;
-			idpubAddress = getIdentityAddressFromKey(publicKeyBytes, "idpub");
+			idpubString = getIdentityFromKey(publicKeyBytes, "idpub");
 			privateBytes = null;
-			idsecAddress = "";
+			idsecString = "";
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -279,8 +279,8 @@ public class main {
 	}
 
 	/**
-	 * setAddressFromPublicKeyString - verifies public key is valid then pulls 32
-	 * byte private key bytes Sets public address and public bytes (now you can
+	 * setIdentityFromPublicKeyString - verifies public key is valid then pulls 32
+	 * byte private key bytes Sets public string and public bytes (now you can
 	 * verify signature) CLEARS PRIVATE KEY VALUES AS THEY MAY NOT MATCH * to get
 	 * the keys, call get functions after set
 	 *
@@ -288,22 +288,22 @@ public class main {
 	 * @return none. user get calls to access keys
 	 *
 	 **/
-	public static void setAddressFromPublicKeyString(String publicKeyString) {
+	public static void setIdentityFromPublicKeyString(String publicKeyString) {
 
 		try {
 
 			byte[] b256 = new byte[41];
 			byte[] hash = new byte[32];
 
-			b256 = Encode58addressto256(publicKeyString);
+			b256 = Encode58to256(publicKeyString);
 
 			System.arraycopy(b256, 5, hash, 0, 32);
 			System.out.println(bytesToHex(hash));
 
 			publicBytes = hash;
-			idpubAddress = getIdentityAddressFromKey(hash, "idpub");
+			idpubString = getIdentityFromKey(hash, "idpub");
 			privateBytes = null;
-			idsecAddress = "";
+			idsecString = "";
 
 			return;
 
@@ -399,7 +399,7 @@ public class main {
 		return strResponse;
 	}
 
-	private static byte[] Encode58addressto256(String data) {
+	private static byte[] Encode58to256(String data) {
 		// you are doing signed integer math here. it may be unsigned in the rest of the
 		// world. watch it
 		String code_string = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
