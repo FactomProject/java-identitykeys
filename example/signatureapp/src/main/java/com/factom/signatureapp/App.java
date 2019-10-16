@@ -23,8 +23,8 @@ import net.i2p.crypto.eddsa.spec.EdDSAPrivateKeySpec;
 import net.i2p.crypto.eddsa.spec.EdDSAPublicKeySpec;
 
 public class App {
-    private static String idsecAddress = "";
-    private static String idpubAddress = "";
+    private static String idsecString = "";
+    private static String idpubString = "";
     private static byte[] privateBytes;
     private static byte[] publicBytes;
     private static EdDSAPublicKey publicKey;
@@ -82,7 +82,7 @@ public class App {
     public static void makeSignedEntry(String chainId, String entryContent, String signerPrivateKey,
             String signerChainId, String[] additionalExtIds) {
         EntriesApi entriesAPI = new EntriesApi();
-        setAddressFromPrivateKeyString(signerPrivateKey);
+        setIdentityFromPrivateKeyString(signerPrivateKey);
 
         Base64.Encoder encoder = Base64.getEncoder();
         String isoTimestamp = currentTime();
@@ -91,7 +91,7 @@ public class App {
         entryCreate.addExternalIdsItem("U2lnbmVkRW50cnk="); // "SignedEntry"
         entryCreate.addExternalIdsItem("AQ=="); // "0x01"
         entryCreate.addExternalIdsItem(encoder.encodeToString(signerChainId.getBytes()));
-        entryCreate.addExternalIdsItem(encoder.encodeToString(idpubAddress.getBytes()));
+        entryCreate.addExternalIdsItem(encoder.encodeToString(idpubString.getBytes()));
 
         // The signed content consists of a concatenation of the Signer Chain ID, the
         // Content, and the ISO-8601 timestamp.
@@ -127,13 +127,13 @@ public class App {
         return sdf.format(date);
     }
 
-    // get calls for address values
-    public static String getIDSecAddress() {
-        return idsecAddress;
+    // get calls for identity values
+    public static String getIDSecString() {
+        return idsecString;
     }
 
-    public static String getIDPubAddress() {
-        return idpubAddress;
+    public static String getIDPubString() {
+        return idpubString;
     }
 
     public static byte[] getIDSecBytes() {
@@ -145,7 +145,7 @@ public class App {
     }
 
     /**
-     * getIdentityAddressFromKey - takes a 32 byte array holding the private key. if
+     * getIdentityFromKey - takes a 32 byte array holding the private key. if
      * your private key is 64 bytes, it is the first 32
      *
      * @param key     byte[]
@@ -153,8 +153,8 @@ public class App {
      * @return idsec public key format or idpub public key format
      *
      **/
-    public static String getIdentityAddressFromKey(byte[] key, String keyType) {
-        String address = "";
+    public static String getIdentityFromKey(byte[] key, String keyType) {
+        String identity = "";
         byte[] appendPrefix = new byte[37];
         byte[] appendSuffix = new byte[41];
         byte[] firstHash;
@@ -183,27 +183,27 @@ public class App {
         appendSuffix[39] = firstHash[2];
         appendSuffix[40] = firstHash[3];
 
-        address = Encode256to58(appendSuffix);
-        return address;
+        identity = Encode256to58(appendSuffix);
+        return identity;
 
     }
 
     /**
-     * setAddressWithNewKey - generates random seed then calls
-     * setAddressFromPrivateKeyBytes and created the public/private key pairs seed
+     * setIdentityWithNewKey - generates random seed then calls
+     * setIdentityFromPrivateKeyBytes and created the public/private key pairs seed
      * is the private key * to get the keys, call get functions after set
      *
      * @return idsec public key format or idpub public key format
      *
      **/
-    public static void setAddressWithNewKey() {
+    public static void setIdentityWithNewKey() {
 
         try {
 
             SecureRandom random = new SecureRandom();
             byte seed[] = random.generateSeed(32);
             byte seedHash[] = sha256Bytes(seed);
-            setAddressFromPrivateKeyBytes(seedHash);
+            setIdentityFromPrivateKeyBytes(seedHash);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -212,7 +212,7 @@ public class App {
     }
 
     /**
-     * setAddressFromPrivateKeyBytes - generates public key that goes with the private key
+     * setIdentityFromPrivateKeyBytes - generates public key that goes with the private key
      * (seed) and creates the public/private key pairs * to get the keys, call get
      * functions after set
      *
@@ -221,7 +221,7 @@ public class App {
      *
      **/
 
-    public static void setAddressFromPrivateKeyBytes(byte[] seed) {
+    public static void setIdentityFromPrivateKeyBytes(byte[] seed) {
 
         try {
 
@@ -234,8 +234,8 @@ public class App {
             privateBytes = seed;
             publicBytes = publicKey.getAbyte();
 
-            idsecAddress = getIdentityAddressFromKey(privateBytes, "idsec");
-            idpubAddress = getIdentityAddressFromKey(publicBytes, "idpub");
+            idsecString = getIdentityFromKey(privateBytes, "idsec");
+            idpubString = getIdentityFromKey(publicBytes, "idpub");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -244,28 +244,28 @@ public class App {
     }
 
     /**
-     * setAddressFromPrivateKeyString - verifies private key is valid then pulls 32
+     * setIdentityFromPrivateKeyString - verifies private key is valid then pulls 32
      * byte private key bytes * from idsec format and calls
-     * setAddressFromPrivateKeyBytes and creates the public/private key pairs * to
+     * setIdentityFromPrivateKeyBytes and creates the public/private key pairs * to
      * get the keys, call get functions after set
      *
      * @param privateKeyString idsec formatted string
      * @return none. user get calls to access keys
      *
      **/
-    public static void setAddressFromPrivateKeyString(String privateKeyString) {
+    public static void setIdentityFromPrivateKeyString(String privateKeyString) {
 
         try {
 
             byte[] b256 = new byte[41];
             byte[] hash = new byte[32];
 
-            b256 = Encode58addressto256(privateKeyString);
+            b256 = Encode58to256(privateKeyString);
 
             System.arraycopy(b256, 5, hash, 0, 32);
-            setAddressFromPrivateKeyBytes(hash);
+            setIdentityFromPrivateKeyBytes(hash);
 
-            if (privateKeyString.equals(idsecAddress)) {
+            if (privateKeyString.equals(idsecString)) {
                 return;
             } else {
                 // key problem.
@@ -279,22 +279,22 @@ public class App {
     }
 
     /**
-     * setAddressFromPublicKeyBytes - sets public key bytes creates idpub format for
-     * idpubAddress CLEARS PRIVATE KEY VALUES AS THEY MAY NOT MATCH * to get the
+     * setIdentityFromPublicKeyBytes - sets public key bytes creates idpub format for
+     * idpubString CLEARS PRIVATE KEY VALUES AS THEY MAY NOT MATCH * to get the
      * keys, call get functions after set
      *
      * @param privateKeyString idsec formatted string
      * @return none. user get calls to access keys
      *
      **/
-    public static void setAddressFromPublicKeyBytes(byte[] publicKeyBytes) {
+    public static void setIdentityFromPublicKeyBytes(byte[] publicKeyBytes) {
 
         try {
 
             publicBytes = publicKeyBytes;
-            idpubAddress = getIdentityAddressFromKey(publicKeyBytes, "idpub");
+            idpubString = getIdentityFromKey(publicKeyBytes, "idpub");
             privateBytes = null;
-            idsecAddress = "";
+            idsecString = "";
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -303,8 +303,8 @@ public class App {
     }
 
     /**
-     * setAddressFromPublicKeyString - verifies public key is valid then pulls 32
-     * byte private key bytes Sets public address and public bytes (now you can
+     * setIdentityFromPublicKeyString - verifies public key is valid then pulls 32
+     * byte private key bytes Sets public key string and public bytes (now you can
      * verify signature) CLEARS PRIVATE KEY VALUES AS THEY MAY NOT MATCH * to get
      * the keys, call get functions after set
      *
@@ -312,22 +312,22 @@ public class App {
      * @return none. user get calls to access keys
      *
      **/
-    public static void setAddressFromPublicKeyString(String publicKeyString) {
+    public static void setIdentityFromPublicKeyString(String publicKeyString) {
 
         try {
 
             byte[] b256 = new byte[41];
             byte[] hash = new byte[32];
 
-            b256 = Encode58addressto256(publicKeyString);
+            b256 = Encode58to256(publicKeyString);
 
             System.arraycopy(b256, 5, hash, 0, 32);
             System.out.println(bytesToHex(hash));
 
             publicBytes = hash;
-            idpubAddress = getIdentityAddressFromKey(hash, "idpub");
+            idpubString = getIdentityFromKey(hash, "idpub");
             privateBytes = null;
-            idsecAddress = "";
+            idsecString = "";
 
             return;
 
@@ -423,7 +423,7 @@ public class App {
         return strResponse;
     }
 
-    private static byte[] Encode58addressto256(String data) {
+    private static byte[] Encode58to256(String data) {
         // you are doing signed integer math here. it may be unsigned in the rest of the
         // world. watch it
         String code_string = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
